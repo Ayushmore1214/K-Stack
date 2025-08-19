@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        # IMPORTANT: The image tag is a placeholder that our CI/CD pipeline will replace.
+        image: IMAGE_REPOSITORY_URL:IMAGE_TAG_PLACEHOLDER
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: password
+        - name: DB_HOST
+          # This value comes from a secret created in the CI/CD pipeline
+          valueFrom:
+            secretKeyRef:
+              name: db-host
+              key: host
+        - name: DB_NAME
+          value: "todo-appdb" # This should match your Terraform config

@@ -1,0 +1,55 @@
+name: Deploy Full Stack App to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1 # Change to your region
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push Backend image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: todo-app/backend # MUST match your Terraform ECR repo name
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./application/backend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Set up Kubeconfig
+        run: |
+          aws eks update-kubeconfig --name todo-app-cluster --region ap-south-1 # MUST match your Terraform EKS cluster name
+
+      - name: Create DB host secret in Kubernetes
+        # This creates the secret for the DB host dynamically.
+        run: |
+          kubectl create secret generic db-host --from-literal=host=${{ secrets.DB_HOST }} --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Update Kubernetes deployment with new image tag
+        run: |
+          # Use sed to replace the placeholder in our deployment file with the new image URL and tag
+          sed -i 's|IMAGE_REPOSITORY_URL:IMAGE_TAG_PLACEHOLDER|${{ steps.build-image.outputs.image }}|' kubernetes/deployment.yaml
+
+      - name: Deploy to EKS
+        run: |
+          # Apply all the manifest files in the kubernetes directory
+          # The secrets.yaml for credentials should be applied manually once beforehand.
+          kubectl apply -f kubernetes/
