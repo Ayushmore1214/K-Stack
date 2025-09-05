@@ -16,10 +16,13 @@ app.get('/api/db-check', async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query('SELECT NOW()');
-    res.json({ db_time: result.rows[0].now });
+    // Send a proper JSON success message
+    res.status(200).json({ db_time: result.rows[0].now });
     client.release();
   } catch (err) {
-    res.status(500).send('Database connection error!');
+    console.error('Database connection error:', err);
+    // THIS IS THE FIX: Send a proper JSON error message
+    res.status(500).json({ error: 'Database connection error!', details: err.message });
   }
 });
 
