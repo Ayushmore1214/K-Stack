@@ -1,0 +1,5 @@
+body { background-color: #282c34; color: white; text-align: center; font-family: sans-serif; }
+.App { max-width: 600px; margin: 5rem auto; background-color: #20232a; padding: 2rem; border-radius: 10px; }
+.buttons { display: flex; justify-content: center; gap: 1rem; margin: 2rem 0; }
+button { background-color: #61dafb; border: 0; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+.response { background-color: #282c34; padding: 1rem; border-radius: 5px; min-height: 50px; }
