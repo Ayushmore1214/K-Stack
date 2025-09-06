@@ -5,11 +5,10 @@ data "aws_iam_policy_document" "github_actions_assume_role_policy" {
       type        = "Federated"
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"]
     }
-    # This condition must be updated with your repo after the first apply.
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:YOUR_GITHUB_ORG/REPO:*"]
+      values   = ["repo:Ayushmore1214/K-Stack:*"]
     }
   }
 }
@@ -21,8 +20,11 @@ resource "aws_iam_role" "github_actions_role" {
 
 data "aws_iam_policy_document" "ecr_access_policy" {
   statement {
+    actions   = ["ecr:GetAuthorizationToken"]
+    resources = ["*"]
+  }
+  statement {
     actions = [
-      "ecr:GetAuthorizationToken",
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
       "ecr:GetRepositoryPolicy",

@@ -10,6 +10,9 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
+  // THIS IS THE FIX: Opens the door for our Codespace
+  cluster_endpoint_public_access = true
+
   eks_managed_node_groups = {
     main = {
       instance_types = ["t3.medium"]
