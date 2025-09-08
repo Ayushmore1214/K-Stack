@@ -4,29 +4,33 @@ on:
   push:
     branches:
       - main
+    # IMPORTANT: Prevent a feedback loop where the bot's commit triggers itself.
+    # We tell the pipeline to ignore any changes inside the manifests folder.
+    paths-ignore:
+      - 'manifests/**'
 
 permissions:
   id-token: write
-  contents: read
+  contents: write # The pipeline now needs permission to WRITE back to your repo
 
 jobs:
-  build-and-push:
-    name: Build and Push to ECR
+  build-and-deploy:
+    name: Build, Push, and Update Manifest
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
-          aws-region: ap-south-1 # <--- THE DIRECT, HARDCODED FIX
+          aws-region: ap-south-1
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag, and push backend image
         id: build-backend
@@ -49,10 +53,26 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app/frontend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Notify for Manual Deployment
+      
+      - name: Update Kubernetes manifests
         run: |
-          echo "CI pipeline successful. Images pushed to ECR."
-          echo "Please update your Kubernetes manifests with the new image tags and run 'kubectl apply -f manifests/'"
-          echo "Backend Image: ${{ steps.build-backend.outputs.image }}"
-          echo "Frontend Image: ${{ steps.build-frontend.outputs.image }}"
+          # Install yq, a powerful command-line YAML processor
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+          
+          # Use yq to update the image tags in your manifest files
+          yq -i '.spec.template.spec.containers[0].image = "${{ steps.build-backend.outputs.image }}"' manifests/02-backend.yaml
+          yq -i '.spec.template.spec.containers[0].image = "${{ steps.build-frontend.outputs.image }}"' manifests/03-frontend.yaml
+
+      - name: Commit and push manifest changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add manifests/
+          # Check if there are any changes to commit before committing
+          if git diff --staged --quiet; then
+            echo "No manifest changes to commit."
+          else
+            git commit -m "ci: update image tags to ${{ github.sha }}"
+            git push
+          fi
+
