@@ -10,6 +10,10 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
+  template:
+    spec:
+      containers:
+        - image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:7e3435b306770fb1cde3340c0b8266d2410694d1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -28,7 +32,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:4868f0950a4dc1b4c6fac5ff5dc9878290dacd21 # <-- YOUR NEW HEART!
+          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:7e3435b306770fb1cde3340c0b8266d2410694d1 # <-- YOUR NEW HEART!
           ports:
             - containerPort: 8080
           envFrom:

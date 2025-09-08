@@ -10,6 +10,10 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+  template:
+    spec:
+      containers:
+        - image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:7e3435b306770fb1cde3340c0b8266d2410694d1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -28,6 +32,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:992b2efae3f328363a1880e961c553024d61f86e # <-- YOUR NEW IMAGE!
+          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:7e3435b306770fb1cde3340c0b8266d2410694d1 # <-- YOUR NEW IMAGE!
           ports:
             - containerPort: 80
