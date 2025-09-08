@@ -13,7 +13,7 @@ spec:
   template:
     spec:
       containers:
-        - image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:15176e9065e7e1db0bda0b64d0c47a6ef9169bdd
+        - image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:61ecc85705e204d430845be30df0e3676ac36639
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -32,6 +32,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:15176e9065e7e1db0bda0b64d0c47a6ef9169bdd # <-- YOUR NEW IMAGE!
+          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:61ecc85705e204d430845be30df0e3676ac36639 # <-- YOUR NEW IMAGE!
           ports:
             - containerPort: 80
