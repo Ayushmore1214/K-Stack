@@ -13,7 +13,7 @@ spec:
   template:
     spec:
       containers:
-        - image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:c2efd18bd2a68dfebabf9f75f067dd557e61d929
+        - image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:15176e9065e7e1db0bda0b64d0c47a6ef9169bdd
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:c2efd18bd2a68dfebabf9f75f067dd557e61d929 # <-- YOUR NEW HEART!
+          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:15176e9065e7e1db0bda0b64d0c47a6ef9169bdd # <-- YOUR NEW HEART!
           ports:
             - containerPort: 8080
           envFrom:
