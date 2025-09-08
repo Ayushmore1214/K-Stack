@@ -11,10 +11,16 @@ provider "helm" {
 }
 
 resource "helm_release" "prometheus" {
-  name       = "prometheus"
-  repository = "https://prometheus-community.github.io/helm-charts"
-  chart      = "kube-prometheus-stack"
-  namespace  = "monitoring"
+  name             = "prometheus"
+  repository       = "https://prometheus-community.github.io/helm-charts"
+  chart            = "kube-prometheus-stack"
+  namespace        = "monitoring"
   create_namespace = true
-  version    = "51.6.0"
+  version          = "51.6.0"
+
+  # --- THIS IS THE FIX: Wait for the electrician to finish! ---
+  depends_on = [
+    helm_release.aws_load_balancer_controller
+  ]
+  # -----------------------------------------------------------
 }
