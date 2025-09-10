@@ -28,6 +28,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:992b2efae3f328363a1880e961c553024d61f86e # <-- YOUR NEW IMAGE!
+          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:91607abd30f5719e711a78f161b10833872fb708 # <-- YOUR NEW IMAGE!
           ports:
             - containerPort: 80

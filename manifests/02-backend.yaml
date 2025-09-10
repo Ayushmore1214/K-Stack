@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:4868f0950a4dc1b4c6fac5ff5dc9878290dacd21 # <-- YOUR NEW HEART!
+          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:91607abd30f5719e711a78f161b10833872fb708 # <-- YOUR NEW IMAGE!
           ports:
             - containerPort: 8080
           envFrom:

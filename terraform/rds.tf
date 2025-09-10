@@ -1,6 +1,9 @@
-resource "random_password" "db_password" {
-  length  = 16
-  special = true
+# terraform/rds.tf
+
+variable "db_password" {
+  description = "The password for the RDS database"
+  type        = string
+  sensitive   = true
 }
 
 resource "aws_security_group" "rds_sg" {
@@ -22,7 +25,7 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
-# The one true parameter group
+# Re-introducing the beloved security guard so Terraform stops trying to fire him
 resource "aws_db_parameter_group" "default" {
   name   = "${var.cluster_name}-rds-params"
   family = "postgres15"
@@ -42,10 +45,10 @@ resource "aws_db_instance" "default" {
   storage_encrypted      = true
   db_name                = "appdb"
   username               = "dbadmin"
-  password               = random_password.db_password.result
+  password               = var.db_password # Use our new, defined password
   db_subnet_group_name   = aws_db_subnet_group.default.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
-  parameter_group_name   = aws_db_parameter_group.default.name
+  parameter_group_name   = aws_db_parameter_group.default.name # And tell the DB to keep using him
   skip_final_snapshot    = true
   apply_immediately      = true
 }

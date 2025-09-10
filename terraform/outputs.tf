@@ -1,26 +1,45 @@
+# terraform/outputs.tf
+
 output "region" {
-  value = var.region
+  description = "The AWS region."
+  value       = var.region
 }
+
 output "cluster_name" {
-  value = module.eks.cluster_name
+  description = "The name of the EKS cluster."
+  value       = module.eks.cluster_name
 }
-output "frontend_ecr_url" {
-  value = aws_ecr_repository.frontend.repository_url
-}
-output "backend_ecr_url" {
-  value = aws_ecr_repository.backend.repository_url
-}
-output "github_actions_iam_role_arn" {
-  value = aws_iam_role.github_actions_role.arn
-}
+
 output "db_instance_address" {
-  value = aws_db_instance.default.address
+  description = "The address of the RDS instance."
+  value       = aws_db_instance.default.address
 }
+
 output "db_instance_username" {
-  value     = aws_db_instance.default.username
-  sensitive = true
+  description = "The username for the RDS database."
+  value       = aws_db_instance.default.username
+  sensitive   = true
 }
+
+# --- THIS IS THE FIX: Report on the real password ---
 output "db_password" {
-  value     = random_password.db_password.result
-  sensitive = true
+  description = "The password for the RDS database."
+  value       = var.db_password
+  sensitive   = true
+}
+# ---------------------------------------------------
+
+output "frontend_ecr_url" {
+  description = "The URL of the frontend ECR repository."
+  value       = aws_ecr_repository.frontend.repository_url
+}
+
+output "backend_ecr_url" {
+  description = "The URL of the backend ECR repository."
+  value       = aws_ecr_repository.backend.repository_url
+}
+
+output "github_actions_iam_role_arn" {
+  description = "The ARN of the IAM role for GitHub Actions."
+  value       = aws_iam_role.github_actions_role.arn
 }
