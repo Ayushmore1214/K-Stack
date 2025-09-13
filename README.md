@@ -1,4 +1,6 @@
 # K-Stack: A Production-Grade 3-Tier Application on AWS EKS
+<img width="2000" height="600" alt="Black and Blue Dark ProfessionalBusiness Services LinkedIn Article Cover Image (4)" src="https://github.com/user-attachments/assets/5ebb2910-0023-4078-b347-246ba339ba1f" />
+
 
 This repository documents the end-to-end deployment of K-Stack, a scalable and observable 3-tier web application on a managed Kubernetes (EKS) cluster. The entire infrastructure is provisioned as code using Terraform, with a fully automated CI/CD pipeline for container image delivery.
 
