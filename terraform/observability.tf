@@ -18,9 +18,9 @@ resource "helm_release" "prometheus" {
   create_namespace = true
   version          = "51.6.0"
 
-  # --- THIS IS THE FIX: Wait for the electrician to finish! ---
+
   depends_on = [
     helm_release.aws_load_balancer_controller
   ]
-  # -----------------------------------------------------------
+  # -------------------
 }
