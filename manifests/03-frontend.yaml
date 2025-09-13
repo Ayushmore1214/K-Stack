@@ -1,4 +1,4 @@
-# manifests/03-frontend.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,7 +14,7 @@ spec:
   template:
     spec:
       containers:
-        - image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:36d991c0761a22a79d61c5f5a02e4753e355eb3f
+        - image: #Your image 
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          # The pipeline will replace this placeholder
-          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-frontend:36d991c0761a22a79d61c5f5a02e4753e355eb3f
+         
+          image: Your image
           ports:
             - containerPort: 80
