@@ -1,4 +1,4 @@
-# manifests/02-backend.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,7 +14,7 @@ spec:
   template:
     spec:
       containers:
-        - image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:36d991c0761a22a79d61c5f5a02e4753e355eb3f
+        - image: #Your image
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -33,8 +33,8 @@ spec:
     spec:
       containers:
         - name: backend
-          # The pipeline will replace this placeholder
-          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:36d991c0761a22a79d61c5f5a02e4753e355eb3f
+          
+          image: #Your image from pipeline
           ports:
             - containerPort: 8080
           envFrom:
