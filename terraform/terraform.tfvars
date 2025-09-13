@@ -5,7 +5,7 @@ cluster_name = "titan-cluster"
 domain_name  = "example.com"
 
 # terraform/terraform.tfvars
-db_password = "ThisIsMySuperStrongPassword123!"
+db_password = "Your Pass"
 
 
 
