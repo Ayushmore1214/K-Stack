@@ -4,10 +4,9 @@ metadata:
   name: app-ingress
   namespace: app
   annotations:
-    # --- THE CORRECT CHECKLIST ---
     alb.ingress.kubernetes.io/healthcheck-path: /
     alb.ingress.kubernetes.io/success-codes: '200'
-    # --- Standard Stuff ---
+   
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
 spec:
