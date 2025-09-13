@@ -10,7 +10,7 @@ This project deploys a complete 3-tier web application onto a managed Kubernetes
   * **Application:** React Frontend, Node.js Backend
   * **Database:** PostgreSQL (AWS RDS)
   * **CI/CD:** GitHub Actions for building Docker images
-  * **Access:** AWS Load Balancer
+  * **Access:** AWS Load Balancer  
 
 ## Prerequisites
 
