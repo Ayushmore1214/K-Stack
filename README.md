@@ -1,31 +1,71 @@
+# K-Stack: A Production-Grade 3-Tier Application on AWS EKS
 
-xyz
-# 3-Tier EKS Application on AWS
+This repository documents the end-to-end deployment of K-Stack, a scalable and observable 3-tier web application on a managed Kubernetes (EKS) cluster. The entire infrastructure is provisioned as code using Terraform, with a fully automated CI/CD pipeline for container image delivery.
 
-This project deploys a complete 3-tier web application onto a managed Kubernetes (EKS) cluster in AWS. The entire infrastructure is provisioned using Terraform.
+## Live Project Showcase
 
-## Architecture Overview
+The final deployment results in a fully functional, observable, and scalable system.
 
-  * **Infrastructure:** AWS (VPC, EKS, RDS)
-  * **Orchestration:** Terraform
-  * **Application:** React Frontend, Node.js Backend
-  * **Database:** PostgreSQL (AWS RDS)
-  * **CI/CD:** GitHub Actions for building Docker images
-  * **Access:** AWS Load Balancer  
+**Live Application - Full Stack Operational:**
 
-## Prerequisites
+![Backend Status Healthy](./Project-pics/Backendrunning.png)
+![Database Connection Successful](./Project-pics/DBrunning.png)
 
-1.  **AWS Account:** With appropriate IAM permissions.
-2.  **AWS CLI:** Installed and configured (`aws configure`).
-3.  **Terraform:** Installed locally.
-4.  **kubectl:** Installed locally.
-5.  **GitHub Repository:** A personal GitHub repo with the project code.
+*(The frontend, backend, and database are fully operational and connected, demonstrating a successful full-stack deployment.)*
+## Architecture & Design
 
-## Deployment Steps
+This project implements a robust three-tier architecture to ensure separation of concerns, scalability, and security between the presentation (frontend), logic (backend), and data (database) layers.
 
-### Step 1: Provision the Infrastructure
+  * **Infrastructure Layer:** A secure and isolated network foundation is established using a custom AWS VPC with public/private subnets, NAT Gateways, and granular routing rules.
+  * **Orchestration Layer:** A managed Amazon EKS cluster serves as a resilient and scalable platform for running containerized workloads, abstracting away the underlying node management.
+  * **Data Layer:** A managed AWS RDS for PostgreSQL instance provides a robust, highly available database backend, decoupled from the application for enhanced security and performance.
 
-Navigate to the `terraform/` directory and run the following commands. This will build the VPC, EKS cluster, and RDS database. (This step takes \~20 minutes).
+## Key Features & Business Impact
+
+This project is an exercise in production-readiness, demonstrating mastery of core DevOps principles to deliver a system that is automated, consistent, and optimized for cost.
+
+### 100% Reproducible Environments via IaC
+
+The entire cloud infrastructure is defined declaratively using **Terraform**. This Infrastructure as Code (IaC) approach eliminates configuration drift, ensures environment consistency between deployments, and drastically reduces the time and risk associated with manual setup.
+
+### Automated CI/CD for Zero-Touch Builds
+
+A robust CI/CD pipeline, powered by **GitHub Actions**, automates the entire build lifecycle. On every push to the `main` branch, the pipeline builds versioned, production-ready Docker images for the React and Node.js applications and pushes them to a centralized **Amazon ECR** registry.
+
+### Data-Driven Cost Optimization & Observability
+
+A key deliverable of this project was the implementation of a comprehensive observability stack using **Prometheus and Grafana**. By collecting and visualizing real-time metrics on CPU and memory utilization across the cluster, we established a clear baseline for resource consumption. **This critical data provides the foundation for data-driven optimization strategies, such as rightsizing nodes and setting appropriate resource requests/limits, paving the way for potential infrastructure cost reductions of up to 40%.**
+![Cluster Resource Utilization Dashboard](./Project-pics/Monitoring1.png)
+*Detailed cluster compute resource dashboards provide immediate visibility into performance bottlenecks and overallocation.*
+
+![Grafana Monitoring Dashboard](./Project-pics/Monitoring2.png)
+*Granular, pod-level metrics allow for precise application performance tuning and troubleshooting.*
+
+![Pod-Level Metrics in Grafana](./Project-pics/Monitoring3.png)
+*A complete, real-time command center for monitoring the health and performance of the entire kingdom.*
+
+## Technology Stack
+
+  * **Cloud:** AWS (EKS, RDS, ECR, VPC, EC2, ALB)
+  * **Infrastructure as Code:** Terraform
+  * **CI/CD:** GitHub Actions
+  * **Containerization:** Docker
+  * **Orchestration:** Kubernetes
+  * **Observability:** Prometheus, Grafana
+  * **Application:** React.js (Frontend), Node.js (Backend), PostgreSQL (Database)
+
+## Deployment Instructions
+
+To replicate this environment, follow these steps:
+
+### 1\. Prerequisites
+
+  * An AWS account with appropriate IAM permissions.
+  * AWS CLI, Terraform, and `kubectl` installed and configured locally.
+
+### 2\. Provision Infrastructure
+
+Navigate to the `terraform/` directory. Initialize and apply the Terraform configuration. This process will take approximately 20-30 minutes.
 
 ```
 cd terraform
@@ -33,64 +73,71 @@ terraform init
 terraform apply -auto-approve
 ```
 
-### Step 2: Configure GitHub Actions
+### 3\. Configure CI/CD Pipeline
 
-The `terraform apply` command will output an IAM Role ARN.
+The `terraform apply` command will output an IAM Role ARN for GitHub Actions.
 
-1.  Go to your GitHub repository's `Settings` \> `Secrets and variables` \> `Actions`.
-2.  Create a new repository secret named `AWS_IAM_ROLE_ARN` and paste the ARN value.
-3.  Go to the AWS IAM Console, find the new `github-actions-role`, and update its "Trust Policy" to allow your GitHub repository to use it.
+1.  In your GitHub repository settings, create a secret named `AWS_IAM_ROLE_ARN` and provide the ARN.
+2.  In the AWS IAM Console, update the "Trust Policy" of the created `github-actions-role` to allow your specific GitHub repository.
 
-### Step 3: Run the CI Pipeline
+### 4\. Build Container Images
 
-Make a small change to the application code (e.g., in `app/frontend/src/App.js`) and push the commit to your `main` branch.
+Trigger the GitHub Actions workflow by pushing a commit to the `main` branch. The pipeline will build and push the Docker images to ECR and output the new image tags in the logs.
 
-```
-git add .
-git commit -m "feat: trigger initial build"
-git push
-```
+### 5\. Deploy the Application
 
-This will build your Docker images and push them to ECR.
-
-### Step 4: Deploy the Application
-
-1.  **Configure kubectl:** Connect your terminal to your new EKS cluster.
+1.  **Configure `kubectl`:**
     ```
-    aws eks update-kubeconfig --region ap-south-1 --name titan-cluster
+    aws eks update-kubeconfig --region <your-region> --name <your-cluster-name>
     ```
-2.  **Get the new image tags:** Go to the successful GitHub Actions run and find the final image URLs from the "Print New Image Tags" step.
-3.  **Update your manifests:** Manually update the `image:` tags in `manifests/02-backend.yaml` and `manifests/03-frontend.yaml` with the new URLs.
-4.  **Create the Database Secret:** Get your new database password from Terraform and create the Kubernetes secret.
+2.  **Update Manifests:** Replace the `image:` placeholders in `manifests/02-backend.yaml` and `manifests/03-frontend.yaml` with the new tags from the pipeline.
+3.  **Create Database Secret:** Retrieve the database password from Terraform outputs and create the Kubernetes secret.
     ```
-    # Get the password
+    # Get password
     terraform output -raw db_password
 
-    # Create the secret (paste the new password)
+    # Create secret
     kubectl create secret generic db-credentials \
-      --from-literal=DB_HOST='...' \
+      --from-literal=DB_HOST='<PASTE_DB_ADDRESS_HERE>' \
       --from-literal=DB_USER='dbadmin' \
-      --from-literal=DB_PASSWORD='PASTE_YOUR_NEW_PASSWORD_HERE' \
+      --from-literal=DB_PASSWORD='<PASTE_PASSWORD_HERE>' \
       --from-literal=DB_NAME=appdb \
       -n app
     ```
-5.  **Launch the Application:**
+4.  **Launch:**
     ```
     kubectl apply -f manifests/
     ```
 
-### Step 5: Access Your Application
+## Accessing the Grafana Dashboard
 
-Find the public URL of your application's load balancer. (This can take 2-5 minutes to become available).
-
-```
-kubectl get ingress/app-ingress -n app
-```
+1.  **Retrieve Admin Password:**
+    ```
+    kubectl get secret -n monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+    ```
+2.  **Open Secure Tunnel:**
+    ```
+    kubectl port-forward -n monitoring svc/prometheus-grafana 8080:80
+    ```
+3.  Navigate to `http://localhost:8080` and log in with username `admin` and the retrieved password.
 
 ## Cleanup
 
-To destroy all the AWS resources created by this project and avoid charges, run the following command from the `terraform/` directory:
+To prevent ongoing charges, destroy all created resources using Terraform:
 
 ```
+cd terraform
 terraform destroy -auto-approve
 ```
+
+
+## Future Improvements & Scalability
+
+While K-Stack is a complete and functional project, a real-world production system would include several further enhancements. The current architecture serves as the perfect foundation for:
+
+* **Implementing True GitOps:** Integrating a tool like **ArgoCD** to fully automate the final deployment step, creating a "hands-off" CI/CD pipeline where a `git push` to `main` is the only manual action required.
+* **Enforcing Zero-Trust Networking:** Adding a CNI plugin like **Cilium** to implement Kubernetes Network Policies. This would create granular firewall rules, ensuring that frontend pods can only talk to the backend, and only the backend can talk to the database.
+* **Centralized Log Aggregation:** Deploying a logging stack like **Loki** or the **ELK Stack** to aggregate logs from all pods into a single, searchable database, dramatically improving debugging and auditing capabilities.
+
+
+This repository is the result of many hours of building, debugging, and documenting. If it helped you understand a complex topic or saved you time on your own projects, the best way to say thanks is to leave a star ⭐ on the repo.
