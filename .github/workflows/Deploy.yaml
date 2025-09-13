@@ -1,24 +1,19 @@
-name: CI/CD Pipeline
+name: Simple CI Pipeline
 
 on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'manifests/**'
 
-# --- THIS IS THE VIP PASS ---
-# It gives this specific workflow the power to write back to your repo.
 permissions:
   id-token: write
-  contents: write
-# --------------------------
+  contents: read # No longer needs to write back to the repo
 
 jobs:
-  build-and-deploy:
-    name: Build, Push, and Update Manifest
+  build-and-push:
+    name: Build and Push to ECR
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,22 +49,11 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app/frontend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Update Kubernetes manifests
+      
+      # THIS IS YOUR NEW SILVER PLATTER
+      - name: Print New Image Tags
         run: |
-          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
-          yq -i '.spec.template.spec.containers[0].image = "${{ steps.build-backend.outputs.image }}"' manifests/02-backend.yaml
-          yq -i '.spec.template.spec.containers[0].image = "${{ steps.build-frontend.outputs.image }}"' manifests/03-frontend.yaml
-
-      - name: Commit and push manifest changes
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add manifests/
-          if git diff --staged --quiet; then
-            echo "No manifest changes to commit."
-          else
-            git commit -m "ci: update image tags to ${{ github.sha }}"
-            git pull --rebase
-            git push
-          fi
+          echo "CI pipeline successful. Images pushed to ECR."
+          echo "Please update your Kubernetes manifests with these new image tags:"
+          echo "Backend Image: ${{ steps.build-backend.outputs.image }}"
+          echo "Frontend Image: ${{ steps.build-frontend.outputs.image }}"
