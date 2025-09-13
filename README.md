@@ -1,4 +1,5 @@
 
+
 # 3-Tier EKS Application on AWS
 
 This project deploys a complete 3-tier web application onto a managed Kubernetes (EKS) cluster in AWS. The entire infrastructure is provisioned using Terraform.
