@@ -11,6 +11,10 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
+  template:
+    spec:
+      containers:
+        - image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:36d991c0761a22a79d61c5f5a02e4753e355eb3f
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -30,7 +34,7 @@ spec:
       containers:
         - name: backend
           # The pipeline will replace this placeholder
-          image: placeholder 
+          image: 442426896735.dkr.ecr.ap-south-1.amazonaws.com/app-backend:36d991c0761a22a79d61c5f5a02e4753e355eb3f
           ports:
             - containerPort: 8080
           envFrom:
