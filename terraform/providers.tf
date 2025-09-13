@@ -17,7 +17,7 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.5"
     }
-    # ADD THIS NEW PROVIDER
+    
     http = {
       source  = "hashicorp/http"
       version = "~> 3.4"
