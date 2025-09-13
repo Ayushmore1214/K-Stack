@@ -21,13 +21,13 @@ output "db_instance_username" {
   sensitive   = true
 }
 
-# --- THIS IS THE FIX: Report on the real password ---
+
 output "db_password" {
   description = "The password for the RDS database."
   value       = var.db_password
   sensitive   = true
 }
-# ---------------------------------------------------
+# -----------------------
 
 output "frontend_ecr_url" {
   description = "The URL of the frontend ECR repository."
