@@ -143,3 +143,4 @@ While K-Stack is a complete and functional project, a real-world production syst
 
 
 This repository is the result of many hours of building, debugging, and documenting. If it helped you understand a complex topic or saved you time on your own projects, the best way to say thanks is to leave a star ⭐ on the repo.
+Also if you wanna go in more depth about this project do give a read : https://heyyayush.hashnode.dev/k-stack-architecting-a-3-tier-observable-application-on-eks
