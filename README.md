@@ -6,6 +6,7 @@ This repository documents the end-to-end deployment of K-Stack, a scalable and o
 
 ## Live Project Showcase
 
+
 The final deployment results in a fully functional, observable, and scalable system.
 
 **Live Application - Full Stack Operational:**
