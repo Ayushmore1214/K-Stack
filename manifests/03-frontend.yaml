@@ -34,6 +34,6 @@ spec:
       containers:
         - name: frontend
          
-          image: Your image
+          image: # Your image from CI
           ports:
             - containerPort: 80
